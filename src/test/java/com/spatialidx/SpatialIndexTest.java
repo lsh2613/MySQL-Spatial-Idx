@@ -1,7 +1,6 @@
 package com.spatialidx;
 
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
@@ -9,6 +8,7 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.test.annotation.Rollback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +61,7 @@ public class SpatialIndexTest {
         jdbcTemplate.batchUpdate(sql, batchArgs);
     }
 
+//    @Rollback(false) // Explain 활용을 위한 목데이터 유지 시 주석 제거
     @Test
     void testFindAllWithInCircleArea() {
         //given
