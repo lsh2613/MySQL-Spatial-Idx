@@ -20,6 +20,7 @@ class MyCoordinateTest {
     private MyCoordinateRepository myCoordinateRepository;
 
     private final GeometryFactory geometryFactory = new GeometryFactory();
+    private final WKTReader wktReader = new WKTReader();
 
     @Test
     void createPointWithFactory() {
@@ -39,7 +40,6 @@ class MyCoordinateTest {
     @Test
     void createPointWithWKT() throws ParseException {
         //given
-        WKTReader wktReader = new WKTReader();
 
         //when
         Point point = (Point) wktReader.read("POINT(180 90)");
@@ -88,7 +88,6 @@ class MyCoordinateTest {
     @Test
     void createPolygonWithWKT() throws ParseException {
         //given
-        WKTReader wktReader = new WKTReader();
         Geometry read = wktReader.read("POLYGON((0 0, 10 0, 10 10, 0 10, 0 0))");
 
         //when
