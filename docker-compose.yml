@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  database:
+    container_name: mysql_db
+    image: mysql
+    environment:
+      MYSQL_DATABASE: spatial_db
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_ROOT_PASSWORD: 1234
+    ports:
+      - "3306:3306"
+    command: ["--character-set-server=utf8mb4","--collation-server=utf8mb4_unicode_ci"]
