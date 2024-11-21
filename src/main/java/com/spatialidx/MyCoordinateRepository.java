@@ -27,5 +27,4 @@ public interface MyCoordinateRepository extends JpaRepository<MyCoordinate, Long
     List<MyCoordinate> findAllWithInCircleAreaWithoutIdx(@Param("center") final Point center,
                                                          @Param("radius") final int radius);
 
-
 }

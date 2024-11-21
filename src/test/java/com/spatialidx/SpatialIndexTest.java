@@ -57,7 +57,7 @@ public class SpatialIndexTest {
 
         List<Object[]> batchArgs = new ArrayList<>();
         for (MyCoordinate coordinate : coordinates) {
-            batchArgs.add(new Object[] { coordinate.getPoint().toText() });
+            batchArgs.add(new Object[]{coordinate.getPoint().toText()});
         }
 
         jdbcTemplate.batchUpdate(sql, batchArgs);
@@ -74,7 +74,7 @@ public class SpatialIndexTest {
         long start = System.currentTimeMillis();
         List<MyCoordinate> results = repository.findAllWithInCircleAreaWithIdx(center, radius);
         long end = System.currentTimeMillis();
-        System.out.println("공간 인덱스 조회 실행 시간 = " + (end-start));
+        System.out.println("공간 인덱스 조회 실행 시간 = " + (end - start) + "ms");
 
         //then
         assertThat(results.size()).isGreaterThanOrEqualTo(QUERY_HIT);
@@ -91,7 +91,7 @@ public class SpatialIndexTest {
         long start = System.currentTimeMillis();
         List<MyCoordinate> results = repository.findAllWithInCircleAreaWithoutIdx(center, radius);
         long end = System.currentTimeMillis();
-        System.out.println("공간 인덱스 없이 조회 실행 시간 = " + (end-start));
+        System.out.println("공간 인덱스 없이 조회 실행 시간 = " + (end - start) + "ms");
 
         //then
         assertThat(results.size()).isGreaterThanOrEqualTo(QUERY_HIT);
