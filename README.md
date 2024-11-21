@@ -1,6 +1,6 @@
 ### 01. 프로젝트 설명
 - Spring + MySQL의 Spatial Index를 적용한 개인 프로젝트
-- 자세한 설명과 테스트는 [블로그]([https://lsh2613.tistory.com/260](https://lsh2613.tistory.com/264))를 통해 확인해볼 수 있다
+- 자세한 설명과 테스트는 [블로그](https://lsh2613.tistory.com/264)를 통해 확인해볼 수 있다
 
 ### 02. 기능
 - MySQL의 공간 데이터 생성
