@@ -111,7 +111,7 @@ class MyCoordinateTest {
         myCoordinateRepository.save(ce2);
 
         //when
-        List<MyCoordinate> allContainArea = myCoordinateRepository.findAllWithInCircleArea(point, 5000);
+        List<MyCoordinate> allContainArea = myCoordinateRepository.findAllWithInCircleAreaWithIdx(point, 5000);
 
         //then
         assertThat(allContainArea).hasSize(1);
