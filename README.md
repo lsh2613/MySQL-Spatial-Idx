@@ -5,7 +5,7 @@
 ### 02. 기능
 - Spring에서 MySQL의 공간 데이터 적용 및 생성
 - Spring에서 MySQL의 공간 인덱스를 활용한 조회
-- 공간 인덱스를 타지 않은 조회, 공간 인덱스 조회의 성능 비교
+- 성능 비교 (공간 인덱스X vs 공간 인덱스O)
 
 ### 03. 사용 기술
 - `Spring Boot 3.2`, `Spring Data JPA`
