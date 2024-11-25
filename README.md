@@ -1,5 +1,7 @@
 ### 01. 프로젝트 설명
 - Spring + MySQL의 Spatial Index를 적용한 개인 프로젝트
+- 10,000개의 테스트 데이터를 위한 bulk insert query를 활용
+- 공간 인덱스가 적용된 엔티티의 조회 성능 비교
 - 자세한 설명과 테스트는 [블로그](https://lsh2613.tistory.com/264)를 통해 확인해볼 수 있다
 
 ### 02. 기능
