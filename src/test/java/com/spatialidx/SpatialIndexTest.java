@@ -9,6 +9,7 @@ import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.util.StopWatch;
 import org.springframework.test.annotation.Rollback;
 
 import java.util.ArrayList;
@@ -71,10 +72,13 @@ public class SpatialIndexTest {
         int radius = 5000;
 
         //when
-        long start = System.currentTimeMillis();
+        StopWatch stopwatch = new StopWatch("공간 인덱스");
+
+        stopwatch.start("공간 인덱스를 통한 조회");
         List<MyCoordinate> results = repository.findAllWithInCircleAreaWithIdx(center, radius);
-        long end = System.currentTimeMillis();
-        System.out.println("공간 인덱스 조회 실행 시간 = " + (end - start) + "ms");
+        stopwatch.stop();
+
+        System.out.println(stopwatch.prettyPrint());
 
         //then
         assertThat(results.size()).isGreaterThanOrEqualTo(QUERY_HIT);
@@ -88,10 +92,13 @@ public class SpatialIndexTest {
         int radius = 5000;
 
         //when
-        long start = System.currentTimeMillis();
+        StopWatch stopwatch = new StopWatch("공간 인덱스 X");
+
+        stopwatch.start("공간 인덱스 없이 조회");
         List<MyCoordinate> results = repository.findAllWithInCircleAreaWithoutIdx(center, radius);
-        long end = System.currentTimeMillis();
-        System.out.println("공간 인덱스 없이 조회 실행 시간 = " + (end - start) + "ms");
+        stopwatch.stop();
+
+        System.out.println(stopwatch.prettyPrint());
 
         //then
         assertThat(results.size()).isGreaterThanOrEqualTo(QUERY_HIT);
