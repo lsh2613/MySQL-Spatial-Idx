@@ -12,11 +12,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-//@Rollback(false) // Explain 활용을 위한 목데이터 유지 시 주석 제거
 @Transactional
 @SpringBootTest
 public class SpatialIndexTest {
@@ -29,27 +29,37 @@ public class SpatialIndexTest {
 
     @BeforeAll
     static void setupData(@Autowired JdbcTemplate jdbcTemplate) {
-        // 중심 좌표 (0, 0)에서 반경 5000m 내에 포함될 좌표 QUERY_HIT개 생성
+        final int totalDataCnt = 10_000;
         List<MyCoordinate> myCoordinates = new ArrayList<>();
 
-        for (int i = 0; i < QUERY_HIT; i++) {
+        myCoordinates.addAll(generateCoordinatesWithin5000m(QUERY_HIT));
+        myCoordinates.addAll(generateRandomCoordinates(totalDataCnt - QUERY_HIT));
+
+        batchInsertCoordinates(jdbcTemplate, myCoordinates);
+    }
+
+    private static List<MyCoordinate> generateCoordinatesWithin5000m(int cnt) {
+        List<MyCoordinate> myCoordinates = new ArrayList<>();
+        for (int i = 0; i < cnt; i++) {
             Point point = geometryFactory.createPoint(new Coordinate(
                     Math.random() * 0.01 - 0.005, // -0.005 ~ 0.005 범위의 위도
                     Math.random() * 0.01 - 0.005  // -0.005 ~ 0.005 범위의 경도
             ));
             myCoordinates.add(MyCoordinate.createWithSRID4326(point));
         }
+        return myCoordinates;
+    }
 
-        // 중심 좌표 (0, 0)에서 반경 5000m 내에 포함되지 않는 좌표 나머지 생성
-        for (int i = 0; i < 10000 - QUERY_HIT; i++) {
+    private static List<MyCoordinate> generateRandomCoordinates(int cnt) {
+        List<MyCoordinate> myCoordinates = new ArrayList<>();
+        for (int i = 0; i < cnt; i++) {
             Point point = geometryFactory.createPoint(new Coordinate(
                     Math.random() * 180 - 90, // 임의의 위도 (-90 ~ 90)
                     Math.random() * 180 - 90 // 임의의 경도 (-180 ~ 180)
             ));
             myCoordinates.add(MyCoordinate.createWithSRID4326(point));
         }
-
-        batchInsertCoordinates(jdbcTemplate, myCoordinates);
+        return myCoordinates;
     }
 
     private static void batchInsertCoordinates(JdbcTemplate jdbcTemplate, List<MyCoordinate> coordinates) {
