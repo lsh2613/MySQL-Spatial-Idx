@@ -74,6 +74,8 @@
 >   FROM my_coordinate co IGNORE INDEX (spatial_idx)
 >   WHERE ST_Contains(ST_Buffer(ST_GeomFromText('POINT(0 0)', 4326), 5000), co.point)\G
 > ```
+> ![스크린샷 2025-04-19 오후 7 54 51](https://github.com/user-attachments/assets/24d31599-bab6-4963-a386-1b3208723423)
+>
 > | 항목                | 값               |
 > |-------------------|-----------------|
 > | Table scan        | Full Table Scan |
@@ -83,6 +85,7 @@
 > | 조건 평가 시간      | 129 ms          |
 > | 실제 소요 시간          | 131.7 ms        |
 
+
 > 공간 인덱스를 사용한 조회 쿼리
 > ``` sql
 >   EXPLAIN analyze
@@ -90,6 +93,7 @@
 >   FROM my_coordinate co
 >   WHERE ST_Contains(ST_Buffer(ST_GeomFromText('POINT(0 0)', 4326), 5000), co.point)\G
 > ```
+> ![스크린샷 2025-04-19 오후 7 55 17](https://github.com/user-attachments/assets/9c131cff-0de0-487f-b429-7cc7507204ba)
 > | 항목                | 값                 |
 > |-------------------|-------------------|
 > | Table scan        | Index range scan  |
