@@ -3,15 +3,14 @@ package com.spatialidx;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StopWatch;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -26,54 +25,14 @@ public class SpatialIndexTest {
     private static final int QUERY_HIT = 200;
 
     @BeforeAll
-    static void setupData(@Autowired JdbcTemplate jdbcTemplate) {
+    static void setupData(@Autowired MyCoordinateBatchUtil myCoordinateBatchUtil) {
         final int totalDataCnt = 10_000;
-        List<MyCoordinate> myCoordinates = new ArrayList<>();
-
-        myCoordinates.addAll(generateCoordinatesWithin5000m(QUERY_HIT));
-        myCoordinates.addAll(generateRandomCoordinates(totalDataCnt - QUERY_HIT));
-
-        batchInsertCoordinates(jdbcTemplate, myCoordinates);
+        myCoordinateBatchUtil.setupData(totalDataCnt, QUERY_HIT);
     }
 
     @AfterAll
-    static void cleanupData(@Autowired JdbcTemplate jdbcTemplate) {
-        jdbcTemplate.execute("DELETE FROM my_coordinate");
-    }
-
-    private static List<MyCoordinate> generateCoordinatesWithin5000m(int cnt) {
-        List<MyCoordinate> myCoordinates = new ArrayList<>();
-        for (int i = 0; i < cnt; i++) {
-            Point point = geometryFactory.createPoint(new Coordinate(
-                    Math.random() * 0.01 - 0.005, // -0.005 ~ 0.005 범위의 위도
-                    Math.random() * 0.01 - 0.005  // -0.005 ~ 0.005 범위의 경도
-            ));
-            myCoordinates.add(MyCoordinate.createWithSRID4326(point));
-        }
-        return myCoordinates;
-    }
-
-    private static List<MyCoordinate> generateRandomCoordinates(int cnt) {
-        List<MyCoordinate> myCoordinates = new ArrayList<>();
-        for (int i = 0; i < cnt; i++) {
-            Point point = geometryFactory.createPoint(new Coordinate(
-                    Math.random() * 180 - 90, // 임의의 위도 (-90 ~ 90)
-                    Math.random() * 180 - 90 // 임의의 경도 (-180 ~ 180)
-            ));
-            myCoordinates.add(MyCoordinate.createWithSRID4326(point));
-        }
-        return myCoordinates;
-    }
-
-    private static void batchInsertCoordinates(JdbcTemplate jdbcTemplate, List<MyCoordinate> coordinates) {
-        String sql = "INSERT INTO my_coordinate (point) VALUES (ST_PointFromText(?, 4326))";
-
-        List<Object[]> batchArgs = new ArrayList<>();
-        for (MyCoordinate coordinate : coordinates) {
-            batchArgs.add(new Object[]{coordinate.getPoint().toText()});
-        }
-
-        jdbcTemplate.batchUpdate(sql, batchArgs);
+    static void cleanupData(@Autowired MyCoordinateBatchUtil myCoordinateBatchUtil) {
+        myCoordinateBatchUtil.cleanupData();
     }
 
     @Test
