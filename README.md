@@ -1,70 +1,114 @@
-### 01. 프로젝트 설명
-- Spring + MySQL의 Spatial Index를 적용한 개인 프로젝트
-- 자세한 설명과 테스트는 [블로그](https://lsh2613.tistory.com/264)를 통해 확인해볼 수 있다
+## 01. 프로젝트 설명
 
-### 02. 기능
+- Spring + MySQL의 Spatial Index를 적용한 개인 프로젝트
+
+## 02. 기능
+
 - Spring에서 MySQL의 공간 데이터 적용 및 생성
 - Spring에서 MySQL의 공간 인덱스를 활용한 조회
 - 공간 인덱스를 타지 않은 조회, 공간 인덱스 조회의 성능 비교
 
-### 03. 사용 기술
+## 03. 사용 기술
+
 - `Spring Boot 3.2`, `Spring Data JPA`
 - `hibernate-spatial`
 - `Docker`, `Docker Compose`
 - `MySQL`
 
-### 04. 프로젝트 설명
-- MySQL의 공간 데이터와 공간 인덱스를 활용하기 위한 실습 프로젝트로 별도의 API는 존재하지 않는다
-- MySQL의 공간 데이터를 생성하는 테스트 코드 구현
-- MySQL의 공간 인덱스를 활용한 조회 테스트 코드 구현
-- 10,000개의 테스트 데이터를 위한 bulk insert query를 활용
+## 04. 관련 포스팅
 
-### 05. 공간 인덱스 성능 비교
-> 총 10,000 개의 데이터 중 특정 Point 기준으로 반경 5000m 이내의 200개의 Point를 공간 인덱스를 통한 조회와, 공간 인덱스를 타지 않은 조회를 비교한다
+- [공간 인덱스 적용](https://lsh2613.tistory.com/264)
 
-**애플리케이션에서의 성능 비교**
+## 05. 시작하기
+
+### 애플리케이션 테스트
+
+**1. 프로젝트 불러오기**
+
+``` bash
+  git clone https://github.com/lsh2613/MySQL-Spatial-Idx.git <원하는 경로>
+  cd <원하는 경로>
+```
+
+**2. 도커 컴포즈 실행**<br>
+
+``` bash
+  docker-compose up --build -d
+```
+
+**3. 테스트 코드 실행**
+
+``` bash
+  ./gradlew clean test --tests "com.spatialidx.SpatialIndexTest" --rerun-tasks
+```
+
+### MySQL 테스트
+
+**1. 테스트 데이터 저장**
+
+``` bash
+  ./gradlew test --tests "com.spatialidx.MyCoordinateBatchTest.testSetupData"
+```
+
+**2. MySQL 컨테이너 접속**
+```bash
+  docker exec -it mysql_db bash
+```
+
+**3. MySQL 접속**
+``` bash
+    mysql -u root -p
+    Enter password: 1234
+```
+
+**4. 데이터베이스 선택**
+``` bash
+  use spatial_db;
+```
+
+**5. EXPLAIN analyze 실행**
+> 공간 인덱스를 사용하지 않은 조회 쿼리
+> ``` sql
+>   EXPLAIN analyze
+>   SELECT co.*
+>   FROM my_coordinate co IGNORE INDEX (spatial_idx)
+>   WHERE ST_Contains(ST_Buffer(ST_GeomFromText('POINT(0 0)', 4326), 5000), co.point)\G
+> ```
+> | 항목                | 값               |
+> |-------------------|-----------------|
+> | Table scan        | Full Table Scan |
+> | 실제 조건에 부합하는 row 수 | 200             |
+> | 실제 읽은 row 수       | 10,000          |
+> | 전체 데이터 접근 시간      | 2.6 ms          |
+> | 조건 평가 시간      | 129 ms          |
+> | 실제 소요 시간          | 131.7 ms        |
+
+> 공간 인덱스를 사용한 조회 쿼리
+> ``` sql
+>   EXPLAIN analyze
+>   SELECT co.*
+>   FROM my_coordinate co
+>   WHERE ST_Contains(ST_Buffer(ST_GeomFromText('POINT(0 0)', 4326), 5000), co.point)\G
+> ```
+> | 항목                | 값                 |
+> |-------------------|-------------------|
+> | Table scan        | Index range scan  |
+> | 인덱스               | using spatial_idx |
+> | 실제 조건에 부합하는 row 수 | 200               |
+> | 실제 읽은 row 수       | 200               |
+> | 전체 데이터 접근 시간      | 0.659 ms          |
+> | 조건 평가 시간      | 7.32 ms           |
+> | 전체 소요 시간          | 7.98 ms           |
+
+## 05. 결과
+
+### 애플리케이션에서의 성능 비교
 > 대략 1.79배 빠름
 <img width="1107" alt="image" src="https://github.com/user-attachments/assets/780b39c2-e0f6-4168-81ba-ad079005c90b">
 
-**MySQL에서의 성능 비교**
-> 대략 22배 빠름
-<img width="1107" alt="image" src="https://github.com/user-attachments/assets/5b51a99b-8a6e-4bfd-be2a-ff0d76b1d015">
-
-
-### 06. 시작하기
-**1. 도커 컴포즈를 통해 MySQL 띄우기**<br>
-docker-compose.yml이 존재하는 루트 디렉토리로 이동
-``` shell
-docker-compose up
-```
-
-**2. 테스트 쿼리 성능 비교 확인**
-- 방법 1. 애플리케이션 레벨에서 성능 확인
-  1. @Test void 공간_인덱스_조회(), @Test void 공간_인덱스_없이_조회()를 각각 따로 실행
-  2. 실행 시간 확인
-- 방법 2. MySQL 프로파일링을 통한 확인
-  - ``` sql
-    SET profiling = 1;
-
-    SELECT co.*
-    FROM my_coordinate co IGNORE INDEX (spatial_idx)
-    WHERE ST_Contains(ST_Buffer(ST_GeomFromText('POINT(0 0)', 4326), 5000), co.point);
-
-    SELECT co.*
-    FROM my_coordinate co
-    WHERE ST_Contains(ST_Buffer(ST_GeomFromText('POINT(0 0)', 4326), 5000), co.point);
-    
-    show profiles;
-    ```
-- 방법 3. MySQL의 Explain analyze를 통한 확인
-    - ``` sql
-      EXPLAIN analyze
-      SELECT co.*
-      FROM my_coordinate co IGNORE INDEX (spatial_idx)
-      WHERE ST_Contains(ST_Buffer(ST_GeomFromText('POINT(0 0)', 4326), 5000), co.point);
-      
-      EXPLAIN analyze
-      SELECT co.*
-      FROM my_coordinate co
-      WHERE ST_Contains(ST_Buffer(ST_GeomFromText('POINT(0 0)', 4326), 5000), co.point);
-      ```
+### MySQL에서의 성능 비교
+> | 항목             | 인덱스 사용 시     | 인덱스 사용 안 함   | 차이 (배수)         |
+> |------------------|--------------------|---------------------|---------------------|
+> | **전체 처리 시간** | 7.98 ms            | 131.7 ms            | **약 16.5배** |
+> | **데이터 접근 시간** | 0.659 ms           | 2.6 ms              | **약 3.94배** |
+> | **조건 평가 시간** | 7.32 ms            | 129 ms              | **약 17.6배** |
