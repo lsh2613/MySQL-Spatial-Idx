@@ -1,6 +1,6 @@
 package com.spatialidx;
 
-import jakarta.transaction.Transactional;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.locationtech.jts.geom.Coordinate;
@@ -12,12 +12,10 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StopWatch;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-@Transactional
 @SpringBootTest
 public class SpatialIndexTest {
 
@@ -36,6 +34,11 @@ public class SpatialIndexTest {
         myCoordinates.addAll(generateRandomCoordinates(totalDataCnt - QUERY_HIT));
 
         batchInsertCoordinates(jdbcTemplate, myCoordinates);
+    }
+
+    @AfterAll
+    static void cleanupData(@Autowired JdbcTemplate jdbcTemplate) {
+        jdbcTemplate.execute("DELETE FROM my_coordinate");
     }
 
     private static List<MyCoordinate> generateCoordinatesWithin5000m(int cnt) {
