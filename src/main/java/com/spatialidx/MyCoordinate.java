@@ -24,7 +24,7 @@ public class MyCoordinate {
         this.point = point;
     }
 
-    static public MyCoordinate createMyCoordinateWithSRID4326(Point point) {
+    static public MyCoordinate createWithSRID4326(Point point) {
         point.setSRID(4326);
         return new MyCoordinate(point);
     }

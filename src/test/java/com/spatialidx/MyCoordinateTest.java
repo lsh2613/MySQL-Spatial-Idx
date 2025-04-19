@@ -55,7 +55,7 @@ class MyCoordinateTest {
         //given
         Point point = geometryFactory.createPoint(new Coordinate(10, 110));
         point.setSRID(4326);
-        MyCoordinate myCoordinate = myCoordinateRepository.save(MyCoordinate.createMyCoordinateWithSRID4326(point));
+        MyCoordinate myCoordinate = myCoordinateRepository.save(MyCoordinate.createWithSRID4326(point));
 
         //when
         MyCoordinate saved = myCoordinateRepository.findById(myCoordinate.getId()).get();
@@ -103,11 +103,11 @@ class MyCoordinateTest {
         //given
         Point point = geometryFactory.createPoint(new Coordinate(20, 10));
         point.setSRID(4326);
-        MyCoordinate ce1 = myCoordinateRepository.save(MyCoordinate.createMyCoordinateWithSRID4326(point));
+        MyCoordinate ce1 = myCoordinateRepository.save(MyCoordinate.createWithSRID4326(point));
 
         Point point2 = geometryFactory.createPoint(new Coordinate(40, 40));
         point2.setSRID(4326);
-        MyCoordinate ce2 = MyCoordinate.createMyCoordinateWithSRID4326(point2);
+        MyCoordinate ce2 = MyCoordinate.createWithSRID4326(point2);
         myCoordinateRepository.save(ce2);
 
         //when

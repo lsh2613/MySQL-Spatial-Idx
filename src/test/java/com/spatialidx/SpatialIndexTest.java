@@ -10,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.util.StopWatch;
-import org.springframework.test.annotation.Rollback;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,7 +37,7 @@ public class SpatialIndexTest {
                     Math.random() * 0.01 - 0.005, // -0.005 ~ 0.005 범위의 위도
                     Math.random() * 0.01 - 0.005  // -0.005 ~ 0.005 범위의 경도
             ));
-            myCoordinates.add(MyCoordinate.createMyCoordinateWithSRID4326(point));
+            myCoordinates.add(MyCoordinate.createWithSRID4326(point));
         }
 
         // 중심 좌표 (0, 0)에서 반경 5000m 내에 포함되지 않는 좌표 나머지 생성
@@ -47,7 +46,7 @@ public class SpatialIndexTest {
                     Math.random() * 180 - 90, // 임의의 위도 (-90 ~ 90)
                     Math.random() * 180 - 90 // 임의의 경도 (-180 ~ 180)
             ));
-            myCoordinates.add(MyCoordinate.createMyCoordinateWithSRID4326(point));
+            myCoordinates.add(MyCoordinate.createWithSRID4326(point));
         }
 
         batchInsertCoordinates(jdbcTemplate, myCoordinates);
