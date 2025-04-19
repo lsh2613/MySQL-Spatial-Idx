@@ -1,0 +1,1 @@
+CREATE SPATIAL INDEX spatial_idx ON my_coordinate (point);
