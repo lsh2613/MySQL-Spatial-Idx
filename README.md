@@ -39,7 +39,7 @@
 **3. 테스트 코드 실행**
 
 ``` bash
-  ./gradlew clean test --tests "com.spatialidx.SpatialIndexTest" --rerun-tasks
+  ./gradlew clean test --tests "com.spatialidx.SpatialIndexTest"
 ```
 
 ### MySQL 테스트
