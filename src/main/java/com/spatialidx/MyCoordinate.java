@@ -16,8 +16,7 @@ public class MyCoordinate {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false,
-            columnDefinition = "POINT NOT NULL SRID 4326")
+    @Column(nullable = false, columnDefinition = "POINT NOT NULL SRID 4326")
     private Point point;
 
     private MyCoordinate(Point point) {
