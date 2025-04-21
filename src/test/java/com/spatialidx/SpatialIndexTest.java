@@ -1,9 +1,9 @@
 package com.spatialidx;
 
+import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.Point;
@@ -15,6 +15,7 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+@Slf4j
 @SpringBootTest
 public class SpatialIndexTest {
 
@@ -49,7 +50,7 @@ public class SpatialIndexTest {
         List<MyCoordinate> results = repository.findAllWithInCircleAreaWithIdx(center, radius);
         stopwatch.stop();
 
-        System.out.println(stopwatch.prettyPrint());
+        log.info(stopwatch.prettyPrint());
 
         //then
         assertThat(results.size()).isGreaterThanOrEqualTo(QUERY_HIT);
@@ -69,7 +70,7 @@ public class SpatialIndexTest {
         List<MyCoordinate> results = repository.findAllWithInCircleAreaWithoutIdx(center, radius);
         stopwatch.stop();
 
-        System.out.println(stopwatch.prettyPrint());
+        log.info(stopwatch.prettyPrint());
 
         //then
         assertThat(results.size()).isGreaterThanOrEqualTo(QUERY_HIT);
