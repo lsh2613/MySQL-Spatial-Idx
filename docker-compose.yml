@@ -2,7 +2,7 @@ version: '3'
 
 services:
   database:
-    container_name: mysql_db
+    container_name: spatial_db
     image: mysql
     environment:
       MYSQL_DATABASE: spatial_db
